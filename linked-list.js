@@ -142,15 +142,47 @@ class LinkedList {
     return this;
     }
 
-  }
+  
 
   /** removeAt(idx): return & remove item at idx, */
 
-  removeAt(idx) {}
+  removeAt(idx) {
+    if (idx < 0 || idx >= this.length){
+      throw new Error("Index is invalid!");
+    }
+    
+    if (idx === 0) {
+      return this.shift();
+    }
+    if (idx === this.length -1){
+      return this.pop();
+    }
+    let current = this.head;
+    let count = 0;
+    while (count !== idx - 1) {
+      current = current.next;
+      count++;
+    }
+    let removed = current.next;
+    current.next = removed.next;
+    this.length--;
+    return removed.val;
+  }
 
   /** average(): return an average of all values in the list */
 
-  average() {}
+  average() {
+    if (this.length === 0) {
+      throw new Error("List is empty!");
+    }
+    let sum = 0;
+    let current = this.head;
+    while (current) {
+      sum += current.val;
+      current = current.next;
+    }
+    return sum / this.length;
+  }
 }
 
 module.exports = LinkedList;
