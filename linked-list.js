@@ -25,6 +25,7 @@ class LinkedList {
     if (this.head === null) this.head = newNode;
     if (this.tail !== null) this.tail.next = newNode;
     this.tail = newNode;
+    this.length++;
     return undefined;
   }
 
@@ -32,18 +33,41 @@ class LinkedList {
 
   unshift(val) {
     let newNode = new Node(val);
-    if (this.head === null) {
+    if (!this.head) {
       this.head = newNode;
-      this.tail = newNode;
+      this.tail = this.head;
     } else {
       newNode.next = this.head;
       this.head = newNode;
     }
+    this.length++;
     return undefined;
   }
 
   /** pop(): return & remove last item. */
 
+  pop() {
+    if (!this.head) {
+      throw new Error("Can't pop from an empty list.");
+    }
+    let current = this.head;
+    let newTail = current;
+
+    while (current.next) {
+      newTail = current;
+      current = current.next;
+    }
+    this.tail = newTail;
+    this.tail.next = null;
+
+    this.length--;
+
+    if (this.length === 0) {
+      this.head = null;
+      this.tail = null;
+    }
+    return current.val;
+  }
   pop() {
     if (!this.head) {
       throw new Error("Can't pop from an empty list.");
@@ -105,7 +129,7 @@ class LinkedList {
 
   setAt(idx, val) {
     if (idx < 0 || idx >= this.length) {
-      throw new Error("Index is out of bounds!")
+      throw new Error("Index is out of bounds!");
     }
     let current = this.head;
     let count = 0;
@@ -120,41 +144,45 @@ class LinkedList {
   /** insertAt(idx, val): add node w/val before idx. */
 
   insertAt(idx, val) {
-    let newNode = new Node(val);
-    if (idx < 0 || idx >= this.length) {
+    if (idx < 0 || idx > this.length) {
       throw new Error("Index is invalid!");
-    } 
-    if (idx === 0) {
-      return this.unshift(newNode);
     }
-    if (idx === this.length) {
-      return this.push(newNode);
+    let newNode= new Node(val);
+    if (this.length === 0) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else if (idx === 0) {
+      newNode.next = this.head;
+      this.head = newNode;
+    } else if (idx === this.length) {
+      this.tail.next = newNode;
+      this.tail = newNode;
+    } else {
+      let prev = this.head;
+      let count = 0;
+      while (count < idx -1){
+        prev = prev.next;
+        count++;
+      }
+      newNode.next = prev.next;
+      prev.next = newNode;
+       
     }
-    let current = this.head;
-    let count = 0;
-    while (count != idx -1){
-      current = current.next;
-      count ++
-    }
-    newNode.next = current.next;
-    current.next = newNode;
     this.length++;
-    return this;
-    }
-
-  
+    return undefined;
+  }
 
   /** removeAt(idx): return & remove item at idx, */
 
   removeAt(idx) {
-    if (idx < 0 || idx >= this.length){
+    if (idx < 0 || idx >= this.length) {
       throw new Error("Index is invalid!");
     }
-    
+
     if (idx === 0) {
       return this.shift();
     }
-    if (idx === this.length -1){
+    if (idx === this.length - 1) {
       return this.pop();
     }
     let current = this.head;
@@ -173,7 +201,7 @@ class LinkedList {
 
   average() {
     if (this.length === 0) {
-      throw new Error("List is empty!");
+      return 0;
     }
     let sum = 0;
     let current = this.head;
